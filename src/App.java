@@ -1,5 +1,12 @@
+import view.MainFrame;
+import javax.swing.SwingUtilities;
+
 public class App {
-    public static void main(String[] args) throws Exception {
-        System.out.println("Hello, World!");
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            MainFrame frame = new MainFrame();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
     }
 }
