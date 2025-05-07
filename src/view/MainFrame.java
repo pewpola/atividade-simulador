@@ -6,6 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.text.NumberFormat;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 public class MainFrame extends JFrame {
     private final SimulationController controller;
@@ -13,80 +17,118 @@ public class MainFrame extends JFrame {
     private JTextField referenceStringField;
     private JTextArea resultsArea;
     private JButton simulateButton;
-    
+    private JPanel chartPanel;
+
     public MainFrame() {
         super("Simulador de Algoritmos de Substituição de Páginas");
         this.controller = new SimulationController();
         initializeUI();
     }
-    
+
     private void initializeUI() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(1000, 700);
         setLayout(new BorderLayout(10, 10));
-        
+
         // Painel de entrada
         JPanel inputPanel = new JPanel(new GridLayout(3, 2, 5, 5));
         inputPanel.setBorder(BorderFactory.createTitledBorder("Parâmetros da Simulação"));
-        
+
         inputPanel.add(new JLabel("Sequência de Referência:"));
         referenceStringField = new JTextField("1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5");
         inputPanel.add(referenceStringField);
-        
+
         inputPanel.add(new JLabel("Número de Molduras (Frames):"));
         frameCountField = new JFormattedTextField(NumberFormat.getIntegerInstance());
         frameCountField.setValue(3);
         inputPanel.add(frameCountField);
-        
+
         simulateButton = new JButton("Executar Simulação");
         simulateButton.addActionListener(this::executeSimulation);
         inputPanel.add(new JLabel());
         inputPanel.add(simulateButton);
-        
+
+        // Painel principal com abas
+        JTabbedPane tabbedPane = new JTabbedPane();
+
         // Área de resultados
         resultsArea = new JTextArea();
         resultsArea.setEditable(false);
         resultsArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        JScrollPane scrollPane = new JScrollPane(resultsArea);
-        
+        JScrollPane textScrollPane = new JScrollPane(resultsArea);
+        tabbedPane.addTab("Resultados Textuais", textScrollPane);
+
+        // Painel do gráfico
+        chartPanel = new JPanel(new BorderLayout());
+        tabbedPane.addTab("Gráfico Comparativo", chartPanel);
+
         // Adiciona componentes ao frame
         add(inputPanel, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
-        
+        add(tabbedPane, BorderLayout.CENTER);
+
         // Exemplo de resultados iniciais
         resultsArea.setText("Resultados da simulação serão exibidos aqui...\n\n" +
-                           "Digite a sequência de referência (ex: 1, 2, 3, 4) e o número de molduras, " +
-                           "então clique em 'Executar Simulação'.");
+                         "Digite a sequência de referência (ex: 1, 2, 3, 4) e o número de molduras, " +
+                         "então clique em 'Executar Simulação'.");
     }
-    
+
     private void executeSimulation(ActionEvent e) {
         try {
             int frameCount = ((Number) frameCountField.getValue()).intValue();
             if (frameCount <= 0) {
                 throw new IllegalArgumentException("O número de molduras deve ser positivo");
             }
-            
+
             int[] referenceString = SimulationController.parseReferenceString(referenceStringField.getText());
-            
+
             SimulationResult[] results = controller.simulate(referenceString, frameCount);
-            
+
+            // Atualiza resultados textuais
             StringBuilder sb = new StringBuilder();
             sb.append("Resultados da Simulação:\n");
             sb.append(String.format("Sequência de referência: %s\n", referenceStringField.getText()));
             sb.append(String.format("Número de molduras: %d\n\n", frameCount));
-            
+
             for (SimulationResult result : results) {
                 sb.append(String.format("%s:\n", result.getAlgorithmName()));
                 sb.append(String.format("  - Faltas de página: %d\n", result.getPageFaults()));
                 sb.append(String.format("  - Descrição: %s\n\n", result.getDescription()));
             }
-            
             resultsArea.setText(sb.toString());
+
+            // Atualiza gráfico
+            updateChart(results);
+
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, 
                 "Erro na entrada: " + ex.getMessage(), 
                 "Erro", 
                 JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void updateChart(SimulationResult[] results) {
+        // Cria dataset para o gráfico
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        
+        for (SimulationResult result : results) {
+            dataset.addValue(result.getPageFaults(), "Faltas de Página", result.getAlgorithmName());
+        }
+
+        // Cria o gráfico de barras
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Comparação de Algoritmos de Substituição de Páginas",
+                "Algoritmo",
+                "Número de Faltas de Página",
+                dataset);
+
+        // Configurações visuais
+        chart.setBackgroundPaint(Color.white);
+
+        // Remove o painel antigo e adiciona o novo
+        chartPanel.removeAll();
+        chartPanel.add(new ChartPanel(chart), BorderLayout.CENTER);
+        chartPanel.validate();
+        chartPanel.repaint();
     }
 }

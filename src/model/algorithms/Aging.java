@@ -27,7 +27,6 @@ public class Aging implements PageReplacement {
             
             agingCounters.put(page, 0x80);
             
-            // Simula o envelhecimento periódico (a cada 8 referências)
             if (i % 8 == 0) {
                 ageCounters(agingCounters);
             }
