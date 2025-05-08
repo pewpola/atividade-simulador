@@ -2,6 +2,7 @@
 *(Sistemas Operacionais - Ciência da Computação - Universidade de Fortaleza)*  
 
 **AUTOR 1:** Eduardo Jorge Andrade Mourão Oliveira
+
 **AUTOR 2:** Renan Elid Soares
 
 **PALAVRAS-CHAVE:** Memória Virtual. Algoritmos de Substituição. FIFO. LRU. Clock. Aging.  
@@ -50,22 +51,18 @@ O objetivo é **comparar estatisticamente** seu desempenho e entender em quais c
         * `MemorySimulation.java`
     * `view/` – Interface gráfica
         * `MainFrame.java`
-        * `App.java`
+    * `App.java` - Classe principal para execução
 
 ### **Compilação e Execução**  
 
 #### **Pré-requisitos**  
 - JDK 17+  
-- JFreeChart 1.5.3  
-- JCommon 1.0.24  
+- JFreeChart 1.5.3 -> Incluso na pasta /lib
+- JCommon 1.0.24  -> Incluso na pasta /lib
 
 #### **Para Linux/Mac**
 
-```bash
-# Instalar as duas bibliotecas extras utilizadas
-wget https://repo1.maven.org/maven2/org/jfree/jfreechart/1.5.3/jfreechart-1.5.3.jar  
-wget https://repo1.maven.org/maven2/org/jfree/jcommon/1.0.24/jcommon-1.0.24.jar  
-
+```bash  
 # Compilar a aplicação
 javac -cp ".:lib/jfreechart-1.5.3.jar:lib/jcommon-1.0.24.jar" \
     src/App.java \
@@ -79,31 +76,28 @@ javac -cp ".:lib/jfreechart-1.5.3.jar:lib/jcommon-1.0.24.jar" \
 java -cp "bin:lib/jfreechart-1.5.3.jar:lib/jcommon-1.0.24.jar" App
 ```
 
-## **Para Windows**
-
-### **Baixe os arquivos**:
-
-- [jfreechart-1.5.3.jar]()
-- [jcommon-1.0.24.jar]()
-
-### **Compile e execute**:
+#### **Para Windows**
 
 Abra o terminal `cmd` no diretório do projeto e execute:
 
 ```bash
-javac -cp ".;jfreechart-1.5.3.jar;jcommon-1.0.24.jar" src\App.java src\view\MainFrame.java src\controller\SimulationController.java src\model\MemorySimulation.java src\model\algorithms\*.java -d bin
+# Compilar a aplicação
+javac -cp ".;lib\jfreechart-1.5.3.jar;lib\jcommon-1.0.24.jar" src/App.java src/view/*.java src/controller/*.java src/model/*.java src/model/algorithms/*.java -d bin
+
+# Executar
+java -cp "bin;lib\jfreechart-1.5.3.jar;lib\jcommon-1.0.24.jar" App
 ```
 
 ### **Utilização do Simulador**
 #### **Passos para Simular**:
 
 1. Insira a sequência de páginas
-- Exemplo: 1, 2, 3, 4, 1, 2, 5, ...
+- Exemplo: 1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5
 
 2. Defina o número de frames de memória
 
 3. Clique em "Executar Simulação"
--  Exemplo: 3
+- Exemplo: 3
 
 4. Visualize os resultados nas abas:
 
@@ -129,7 +123,8 @@ javac -cp ".;jfreechart-1.5.3.jar;jcommon-1.0.24.jar" src\App.java src\view\Main
 - **Sequência de Referência**: 1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5  
 - **Número de Molduras (Frames)**: 3
 
-#### **Resultados Obtidos**
+### **Resultados Obtidos**
+
 | Algoritmo                   | Faltas de Página |
 |----------------------------|------------------|
 | FIFO (First-In, First-Out) | 9                |
@@ -137,9 +132,16 @@ javac -cp ".;jfreechart-1.5.3.jar;jcommon-1.0.24.jar" src\App.java src\view\Main
 | Clock (Second Chance)      | 9                |
 | Aging                      | 10               |
 
+![resultados-textuais](/assets/resultados-textuais.png)
+
+#### **Gráfico Comparativo**
+![grafico-comparativo](/assets/grafico-comparativo.png)
+
 ---
 
-#### **Discussão dos Resultados**
+### **Discussão dos Resultados**
+
+#### **Gráfico Comparativo**
 
 A simulação compara o desempenho de quatro algoritmos clássicos de substituição de páginas sob a mesma sequência de referências, utilizando três molduras de memória. A métrica principal avaliada é o número de **page faults** (faltas de página), que indicam quantas vezes foi necessário buscar uma página na memória secundária por não estar presente na memória principal.
 
@@ -158,25 +160,21 @@ A simulação compara o desempenho de quatro algoritmos clássicos de substitui�
 ---
   
 
-### **Gráfico Comparativo**  
-![img](/assets/grafico-comparativo.png)
----
+## **CONCLUSÃO**
 
-## **CONCLUSÃO**  
-O simulador desenvolvido permitiu **avaliar empiricamente** o desempenho dos algoritmos de substituição de páginas, confirmando que:  
-1. **FIFO** é simples, mas ineficiente em certos cenários.  
-2. **LRU** é teoricamente ótimo, mas custoso para implementar.  
-3. **Clock e Aging** oferecem um bom equilíbrio entre desempenho e viabilidade prática.  
+Apesar da expectativa de que o LRU ou Aging liderassem em desempenho, os algoritmos **FIFO e Clock foram mais eficientes** neste caso, com menos faltas. Este resultado reforça a importância de avaliar o contexto de uso — como **localidade temporal e repetição de padrões** — antes de escolher o algoritmo ideal.  
 
-Sugere-se o uso do **Clock** em sistemas com suporte a hardware e **Aging** em sistemas puramente em software.
+Além disso, mesmo que LRU seja considerado o "ideal teórico", suas implementações mais práticas (Clock e Aging) podem se mostrar **mais viáveis e igualmente eficientes**, especialmente em sistemas embarcados ou com restrições de hardware.
 
 ---
 
 ## **REFERÊNCIAS**  
-1. Documentação Oracle Java Swing: [Java Swing](https://docs.oracle.com/javase/tutorial/uiswing/).
-2. JFreeChart. [Documentação Oficial](https://sourceforge.net/projects/jfreechart/)  
+1. Documentação Oracle Java Swing. [Java Swing](https://docs.oracle.com/javase/tutorial/uiswing/).
+2. JFreeChart. [Jfree Org](https://www.jfree.org/jfreechart/)  
+3. JCommon. [JCommon Org](https://www.jfree.org/jcommon/)  
+
 
 Link para o repositório:
- - [atividade-simulador]
+ - [Atividade Simulador Github](https://github.com/pewpola/atividade-simulador)
 
 ---
