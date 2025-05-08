@@ -48,25 +48,20 @@ public class MainFrame extends JFrame {
         inputPanel.add(new JLabel());
         inputPanel.add(simulateButton);
 
-        // Painel principal com abas
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        // Área de resultados
         resultsArea = new JTextArea();
         resultsArea.setEditable(false);
         resultsArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         JScrollPane textScrollPane = new JScrollPane(resultsArea);
         tabbedPane.addTab("Resultados Textuais", textScrollPane);
 
-        // Painel do gráfico
         chartPanel = new JPanel(new BorderLayout());
         tabbedPane.addTab("Gráfico Comparativo", chartPanel);
 
-        // Adiciona componentes ao frame
         add(inputPanel, BorderLayout.NORTH);
         add(tabbedPane, BorderLayout.CENTER);
 
-        // Exemplo de resultados iniciais
         resultsArea.setText("Resultados da simulação serão exibidos aqui...\n\n" +
                          "Digite a sequência de referência (ex: 1, 2, 3, 4) e o número de molduras, " +
                          "então clique em 'Executar Simulação'.");
@@ -83,7 +78,6 @@ public class MainFrame extends JFrame {
 
             SimulationResult[] results = controller.simulate(referenceString, frameCount);
 
-            // Atualiza resultados textuais
             StringBuilder sb = new StringBuilder();
             sb.append("Resultados da Simulação:\n");
             sb.append(String.format("Sequência de referência: %s\n", referenceStringField.getText()));
@@ -96,7 +90,6 @@ public class MainFrame extends JFrame {
             }
             resultsArea.setText(sb.toString());
 
-            // Atualiza gráfico
             updateChart(results);
 
         } catch (Exception ex) {
@@ -108,24 +101,20 @@ public class MainFrame extends JFrame {
     }
 
     private void updateChart(SimulationResult[] results) {
-        // Cria dataset para o gráfico
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         
         for (SimulationResult result : results) {
             dataset.addValue(result.getPageFaults(), "Faltas de Página", result.getAlgorithmName());
         }
 
-        // Cria o gráfico de barras
         JFreeChart chart = ChartFactory.createBarChart(
                 "Comparação de Algoritmos de Substituição de Páginas",
                 "Algoritmo",
                 "Número de Faltas de Página",
                 dataset);
 
-        // Configurações visuais
         chart.setBackgroundPaint(Color.white);
 
-        // Remove o painel antigo e adiciona o novo
         chartPanel.removeAll();
         chartPanel.add(new ChartPanel(chart), BorderLayout.CENTER);
         chartPanel.validate();
