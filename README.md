@@ -78,8 +78,6 @@ java -cp "bin:lib/jfreechart-1.5.3.jar:lib/jcommon-1.0.24.jar" App
 
 #### **Para Windows**
 
-Abra o terminal `cmd` no diretório do projeto e execute:
-
 ```bash
 # Compilar a aplicação
 javac -cp ".;lib\jfreechart-1.5.3.jar;lib\jcommon-1.0.24.jar" src/App.java src/view/*.java src/controller/*.java src/model/*.java src/model/algorithms/*.java -d bin
@@ -123,25 +121,13 @@ java -cp "bin;lib\jfreechart-1.5.3.jar;lib\jcommon-1.0.24.jar" App
 - **Sequência de Referência**: 1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5  
 - **Número de Molduras (Frames)**: 3
 
-### **Resultados Obtidos**
-
-| Algoritmo                   | Faltas de Página |
-|----------------------------|------------------|
-| FIFO (First-In, First-Out) | 9                |
-| LRU (Least Recently Used)  | 10               |
-| Clock (Second Chance)      | 9                |
-| Aging                      | 10               |
-
 ![resultados-textuais](/assets/resultados-textuais.png)
 
-#### **Gráfico Comparativo**
 ![grafico-comparativo](/assets/grafico-comparativo.png)
 
 ---
 
 ### **Discussão dos Resultados**
-
-#### **Gráfico Comparativo**
 
 A simulação compara o desempenho de quatro algoritmos clássicos de substituição de páginas sob a mesma sequência de referências, utilizando três molduras de memória. A métrica principal avaliada é o número de **page faults** (faltas de página), que indicam quantas vezes foi necessário buscar uma página na memória secundária por não estar presente na memória principal.
 
